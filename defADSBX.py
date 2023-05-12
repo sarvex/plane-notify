@@ -34,21 +34,20 @@ def pull_adsbx(planes):
     if api_version not in [1, 2]:
         raise ValueError("Bad ADSBX API Version")
     if main_config.getboolean('ADSBX', 'ENABLE_PROXY') is False:
-        if api_version ==  1:
+        if api_version == 1:
             if len(planes) > 1:
-                        url = "https://adsbexchange.com/api/aircraft/json/"
+                url = "https://adsbexchange.com/api/aircraft/json/"
             elif len(planes) == 1:
-                        url = "https://adsbexchange.com/api/aircraft/icao/" +    str(list(planes.keys())[0]) + "/"
+                url = f"https://adsbexchange.com/api/aircraft/icao/{str(list(planes.keys())[0])}/"
         elif api_version == 2:
             url = "https://adsbexchange.com/api/aircraft/v2/all"
+    elif main_config.has_option('ADSBX', 'PROXY_HOST'):
+        if api_version == 1:
+            url = main_config.get('ADSBX', 'PROXY_HOST') + "/api/aircraft/json/all"
+        elif api_version == 2:
+            url = main_config.get('ADSBX', 'PROXY_HOST') + "/api/aircraft/v2/all"
     else:
-        if main_config.has_option('ADSBX', 'PROXY_HOST'):
-            if api_version ==  1:
-                url = main_config.get('ADSBX', 'PROXY_HOST') + "/api/aircraft/json/all"
-            if api_version ==  2:
-                url = main_config.get('ADSBX', 'PROXY_HOST') + "/api/aircraft/v2/all"
-        else:
-            raise ValueError("Proxy enabled but no host")
+        raise ValueError("Proxy enabled but no host")
     headers = {
         'api-auth': main_config.get('ADSBX', 'API_KEY'),
         'Accept-Encoding': 'gzip'
@@ -84,8 +83,4 @@ def pull_date_ras(date):
                 'Accept-Encoding': 'gzip'
     }
     response = pull(url, headers)
-    if response is not None:
-        data = response.text.splitlines()
-    else:
-        data = None
-    return data
+    return response.text.splitlines() if response is not None else None

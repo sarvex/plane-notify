@@ -21,25 +21,27 @@ if not os.path.isdir("./dependencies/"):
     os.mkdir("./dependencies/")
 required_files = [("Roboto-Regular.ttf", 'https://github.com/googlefonts/roboto/blob/main/src/hinted/Roboto-Regular.ttf?raw=true'), ('airports.csv', 'https://ourairports.com/data/airports.csv'), ('regions.csv', 'https://ourairports.com/data/regions.csv'), ('ADSBX_Logo.png', "https://www.adsbexchange.com/wp-content/uploads/cropped-Stealth.png"), ('Mictronics_db.zip', "https://www.mictronics.de/aircraft-database/indexedDB.php")]
 for file in required_files:
-	file_name = file[0]
-	url = file[1]
-	if not os.path.isfile("./dependencies/" + file_name):
-		print(file_name,  "does not exist downloading now")
-		try:
-			import requests
-			file_content = requests.get(url)
+    file_name = file[0]
+    url = file[1]
+    if not os.path.isfile(f"./dependencies/{file_name}"):
+        print(file_name,  "does not exist downloading now")
+        try:
+            import requests
+            file_content = requests.get(url)
 
-			open(("./dependencies/" + file_name), 'wb').write(file_content.content)
-		except Exception as e:
-			raise e("Error getting", file_name, "from", url)
-		else:
-			print("Successfully got", file_name)
-	else:
-		print("Already have", file_name, "continuing")
-if os.path.isfile("./dependencies/" + required_files[4][0]) and not os.path.isfile("./dependencies/aircrafts.json"):
+            open(f"./dependencies/{file_name}", 'wb').write(file_content.content)
+        except Exception as e:
+        	raise e("Error getting", file_name, "from", url)
+        else:
+            print("Successfully got", file_name)
+    else:
+        print("Already have", file_name, "continuing")
+if os.path.isfile(
+    f"./dependencies/{required_files[4][0]}"
+) and not os.path.isfile("./dependencies/aircrafts.json"):
     print("Extracting Mictronics DB")
     from zipfile import ZipFile
-    with ZipFile("./dependencies/" + required_files[4][0], 'r') as mictronics_db:
+    with ZipFile(f"./dependencies/{required_files[4][0]}", 'r') as mictronics_db:
         mictronics_db.extractall("./dependencies/")
 
 main_config = configparser.ConfigParser()

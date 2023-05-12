@@ -6,9 +6,7 @@ def pull_opensky(planes):
     planeData = None
     opens_api = OpenSkyApi(username= None if main_config.get('OPENSKY', 'USERNAME').upper() == "NONE" else main_config.get('OPENSKY', 'USERNAME'), password= None if main_config.get('OPENSKY', 'PASSWORD').upper() == "NONE" else main_config.get('OPENSKY', 'PASSWORD').upper())
     failed = False
-    icao_array = []
-    for key in planes.keys():
-        icao_array.append(key.lower())
+    icao_array = [key.lower() for key in planes.keys()]
     try:
         planeData = opens_api.get_states(time_secs=0, icao24=icao_array)
     except Exception as e:

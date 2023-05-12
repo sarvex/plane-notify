@@ -42,11 +42,11 @@ def append_airport(filename, airport):
 	draw.text((x, y), text, fill=white, font=head_font)
 	#ICAO | IATA
 	(x, y) = (330, 765)
-	text = iata + " / " + icao
+	text = f"{iata} / {icao}"
 	draw.text((x, y), text, fill=black, font=font)
 	#Distance
 	(x, y) = (460, 765)
-	text = str(round(distance_mi, 2)) + "mi / " + str(round(distance_km, 2)) + "km away"
+	text = f"{str(round(distance_mi, 2))}mi / {str(round(distance_km, 2))}km away"
 	draw.text((x, y), text, fill=black, font=font)
 	#Full name
 	(x, y) = (330, 783)

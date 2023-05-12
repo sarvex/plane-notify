@@ -91,7 +91,7 @@ class Plane:
 
             print("Got data but some data is invalid!")
             print(e)
-            print (Fore.YELLOW +"ADSBX Sourced Data: ", ac_dict, Style.RESET_ALL)
+            print(f"{Fore.YELLOW}ADSBX Sourced Data: ", ac_dict, Style.RESET_ALL)
             self.printheader("foot")
         else:
             self.feeding = True
@@ -111,7 +111,7 @@ class Plane:
             if ac_dict['alt_baro'] != "ground":
                 self.alt_ft = int(ac_dict['alt_baro'])
                 self.on_ground = False
-            elif ac_dict['alt_baro'] == "ground":
+            else:
                 self.alt_ft = 0
                 self.on_ground = True
             if ac_dict.get('flight') is not None:
@@ -141,7 +141,7 @@ class Plane:
 
             print("Got data but some data is invalid!")
             print(e)
-            print (Fore.YELLOW +"ADSBX Sourced Data: ", ac_dict, Style.RESET_ALL)
+            print(f"{Fore.YELLOW}ADSBX Sourced Data: ", ac_dict, Style.RESET_ALL)
             self.printheader("foot")
         else:
             #Error Handling for bad data, sometimes it would seem to be ADSB Decode error
@@ -156,38 +156,94 @@ class Plane:
         if self.last_pos_datetime is not None:
             time_since_contact = self.get_time_since(self.last_pos_datetime)
         output = [
-        [(Fore.CYAN + "ICAO" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + self.icao + Style.RESET_ALL)],
-        [(Fore.CYAN + "Callsign" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + self.callsign + Style.RESET_ALL)] if self.callsign is not None else None,
-        [(Fore.CYAN + "Reg" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + self.reg + Style.RESET_ALL)] if self.reg is not None else None,
-        [(Fore.CYAN + "Squawk" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + self.squawk + Style.RESET_ALL)] if self.squawk is not None else None,
-        [(Fore.CYAN + "Coordinates" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + str(self.latitude) + ", " + str(self.longitude) + Style.RESET_ALL)] if self.latitude is not None and self.longitude is not None else None,
-        [(Fore.CYAN + "Last Contact" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + str(time_since_contact).split(".")[0]+ Style.RESET_ALL)] if self.last_pos_datetime is not None else None,
-        [(Fore.CYAN + "On Ground" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + str(self.on_ground) + Style.RESET_ALL)] if self.on_ground is not None else None,
-        [(Fore.CYAN + "Baro Altitude" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + str("{:,} ft".format(self.alt_ft)) + Style.RESET_ALL)] if self.alt_ft is not None else None,
-        [(Fore.CYAN + "Nav Modes" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + ', '.join(self.nav_modes)  + Style.RESET_ALL)] if "nav_modes" in self.__dict__ and self.nav_modes != None else None,
-        [(Fore.CYAN + "Sel Alt Ft" + Style.RESET_ALL), (Fore.LIGHTGREEN_EX + str("{:,} ft".format(self.sel_nav_alt)) + Style.RESET_ALL)] if "sel_nav_alt" in self.__dict__ and self.sel_nav_alt is not None else None
+            [
+                f"{Fore.CYAN}ICAO{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX + self.icao + Style.RESET_ALL,
+            ],
+            [
+                f"{Fore.CYAN}Callsign{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX + self.callsign + Style.RESET_ALL,
+            ]
+            if self.callsign is not None
+            else None,
+            [
+                f"{Fore.CYAN}Reg{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX + self.reg + Style.RESET_ALL,
+            ]
+            if self.reg is not None
+            else None,
+            [
+                f"{Fore.CYAN}Squawk{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX + self.squawk + Style.RESET_ALL,
+            ]
+            if self.squawk is not None
+            else None,
+            [
+                f"{Fore.CYAN}Coordinates{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX
+                + str(self.latitude)
+                + ", "
+                + str(self.longitude)
+                + Style.RESET_ALL,
+            ]
+            if self.latitude is not None and self.longitude is not None
+            else None,
+            [
+                f"{Fore.CYAN}Last Contact{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX
+                + str(time_since_contact).split(".")[0]
+                + Style.RESET_ALL,
+            ]
+            if self.last_pos_datetime is not None
+            else None,
+            [
+                f"{Fore.CYAN}On Ground{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX + str(self.on_ground) + Style.RESET_ALL,
+            ]
+            if self.on_ground is not None
+            else None,
+            [
+                f"{Fore.CYAN}Baro Altitude{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX
+                + "{:,} ft".format(self.alt_ft)
+                + Style.RESET_ALL,
+            ]
+            if self.alt_ft is not None
+            else None,
+            [
+                f"{Fore.CYAN}Nav Modes{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX + ', '.join(self.nav_modes) + Style.RESET_ALL,
+            ]
+            if "nav_modes" in self.__dict__ and self.nav_modes != None
+            else None,
+            [
+                f"{Fore.CYAN}Sel Alt Ft{Style.RESET_ALL}",
+                Fore.LIGHTGREEN_EX
+                + "{:,} ft".format(self.sel_nav_alt)
+                + Style.RESET_ALL,
+            ]
+            if "sel_nav_alt" in self.__dict__ and self.sel_nav_alt is not None
+            else None,
         ]
         output = list(filter(None, output))
         return tabulate(output, [], 'fancy_grid')
     def printheader(self, type):
         from colorama import Fore, Back, Style
-        if type == "head":
-            header = str("--------- " + self.conf_file_path + " ---------------------------- ICAO: " +  self.icao + " ---------------------------------------")
-        elif type == "foot":
+        if type == "foot":
             header = "----------------------------------------------------------------------------------------------------"
-        print(Back.MAGENTA + header[0:100] + Style.RESET_ALL)
+        elif type == "head":
+            header = str(
+                f"--------- {self.conf_file_path} ---------------------------- ICAO: {self.icao} ---------------------------------------"
+            )
+        print(Back.MAGENTA + header[:100] + Style.RESET_ALL)
     def get_time_since(self, datetime_obj):
-        if datetime_obj != None:
-            time_since = datetime.now() - datetime_obj
-        else:
-            time_since = None
-        return time_since
+        return datetime.now() - datetime_obj if datetime_obj != None else None
     def get_adsbx_map_overlays(self):
-        if self.config.has_option('MAP', 'OVERLAYS'):
-            overlays = self.config.get('MAP', 'OVERLAYS')
-        else:
-            overlays = ""
-        return overlays
+        return (
+            self.config.get('MAP', 'OVERLAYS')
+            if self.config.has_option('MAP', 'OVERLAYS')
+            else ""
+        )
     def route_info(self):
         from lookup_route import lookup_route, clean_data
         def route_format(extra_route_info, type):

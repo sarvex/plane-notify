@@ -75,5 +75,11 @@ def generate_adsbx_screenshot_time_params(timestamp):
     timestamp_dt = datetime.utcfromtimestamp(timestamp)
     print(timestamp_dt)
     start_time = timestamp_dt - timedelta(minutes=1)
-    time_params = "&showTrace=" + timestamp_dt.strftime("%Y-%m-%d")  + "&startTime=" + start_time.strftime("%H:%M:%S") + "&endTime=" + timestamp_dt.strftime("%H:%M:%S")
-    return time_params
+    return (
+        "&showTrace="
+        + timestamp_dt.strftime("%Y-%m-%d")
+        + "&startTime="
+        + start_time.strftime("%H:%M:%S")
+        + "&endTime="
+        + timestamp_dt.strftime("%H:%M:%S")
+    )
